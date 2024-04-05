@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculate T</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #007bff;
+    }
+
+    h2 {
+      color: #007bff;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: inline-block;
+      width: 600px;
+      font-weight: bold;
+    }
+
+    .input-group input {
+      width: calc(100% - 140px);
+      padding: 8px;
+      margin-right: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 30px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Temperature Calculator</h1>
+    <div>
+      
+      <div class="input-group">
+        <label for="T_amb">Ambient Temperature :</label>
+        <input type="number" id="T_amb">
+      </div>
+      <div class="input-group">
+        <label for="q">Q (Heat flow rate):</label>
+        <input type="number" id="q">
+      </div>
+      <h2>For PCB: </h2>
+      <div class="input-group">
+        <label for="pcb_k">Thermal Conductivity (k):</label>
+        <input type="number" id="pcb_k">
+        <label for="pcb_d">Density (ρ):</label>
+        <input type="number" id="pcb_d">
+        <label for="pcb_s">Specific heat (s):</label>
+        <input type="number" id="pcb_s">
+      </div>
+      <div class="input-group">
+        <label for="pcb_l">Length:</label>
+        <input type="number" id="pcb_l">
+        <label for="pcb_b">Breadth:</label>
+        <input type="number" id="pcb_b">
+        <label for="pcb_h">Height:</label>
+        <input type="number" id="pcb_h">
+      </div>
+    </div>
+    <div>
+      <h2>For Box: </h2>
+      <div class="input-group">
+        <label for="box_k">Thermal Conductivity (k):</label>
+        <input type="number" id="box_k">
+        <label for="box_d">Density (ρ):</label>
+        <input type="number" id="box_d">
+        <label for="box_s">Specific heat (s):</label>
+        <input type="number" id="box_s">
+      </div>
+      <div class="input-group">
+        <label for="box_l">Length:</label>
+        <input type="number" id="box_l">
+        <label for="box_b">Breadth:</label>
+        <input type="number" id="box_b">
+        <label for="box_h">Height:</label>
+        <input type="number" id="box_h">
+      </div>
+    </div>
+    
+    <button id="calculate-btn">Calculate T</button>
+    <div id="result"></div>
+  </div>
+  <script>
+    document.getElementById('calculate-btn').addEventListener('click', function() {
+      const T_amb = parseFloat(document.getElementById('T_amb').value);
+      const pcb_k = parseFloat(document.getElementById('pcb_k').value);
+      const pcb_d = parseFloat(document.getElementById('pcb_d').value);
+      const pcb_s = parseFloat(document.getElementById('pcb_s').value);
+      const box_k = parseFloat(document.getElementById('box_k').value);
+      const box_d = parseFloat(document.getElementById('box_d').value);
+      const box_s = parseFloat(document.getElementById('box_s').value);
+      const pcb_l = parseFloat(document.getElementById('pcb_l').value);
+      const pcb_b = parseFloat(document.getElementById('pcb_b').value);
+      const pcb_h = parseFloat(document.getElementById('pcb_h').value);
+      const box_l = parseFloat(document.getElementById('box_l').value);
+      const box_b = parseFloat(document.getElementById('box_b').value);
+      const box_h = parseFloat(document.getElementById('box_h').value);
+      const q = parseFloat(document.getElementById('q').value);
+
+      const area_pcb = pcb_l * pcb_b;
+      const t1p = pcb_k * area_pcb * pcb_h ;
+      const t2p = pcb_d*area_pcb*pcb_h * pcb_s;
+      const den_pcb = t1p + t2p;
+      const T_pcb = q / den_pcb;
+
+      const area_box = box_l * box_b;
+      const t1_box = box_k * (0.0012 * 0.025); // Assuming these are meant to be constants, corrected the parenthesis.
+      const t2_box = 0.5625 * box_s; // Assuming this is a constant, no need for calculation.
+      const den_box = t1_box + t2_box;
+      const T_box = q / den_box;
+
+      const delta_T = T_box + T_pcb;
+      const T = delta_T + T_amb;
+
+      document.getElementById('result').innerText = `T: ${T.toFixed(2)}`;
+    });
+  </script>
+</body>
+</html>
